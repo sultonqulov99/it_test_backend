@@ -7,6 +7,8 @@ import Key_ball from '../model/key_ball.js'
 import Subject from '../model/subjects.js'
 import Status from '../model/status.js'
 import Level from '../model/level.js'
+import Question_test from "../model/question_test.js"
+import Question_img from "../model/question_img.js"
 import path from "path"
 
 function emailSender(userEmail,email_code){
@@ -496,6 +498,15 @@ const GET_LEVEL = async(req,res,next) => {
 const DELETE_STATUS = async (req,res,next) => {
   try {
     const { statusId } = req.params
+    let statusSearchSubject = await Subject.findOne({status_id:statusId}).lean()
+    
+    if(statusSearchSubject){
+      return res.status(403).json({
+        status:403,
+        message:"Categoriyani o'chirib bo'lmaydi, chunki unga Subject biriktirilgan!"
+      })
+    }
+
     let deleteStatus = await Status.findOneAndRemove({_id:statusId})
     if(!deleteStatus){
       return res.status(400).json({
@@ -542,6 +553,22 @@ const UPDATE_STATUS = async(req,res,next) => {
 const DELETE_SUBJECT = async (req,res,next) => {
   try {
     const { subjectId } = req.params
+    let subjectSearchQuestion_test = await Question_test.findOne({subject_id:subjectId}).lean()
+    let subjectSearchQuestion_img = await Question_img.findOne({subject_id:subjectId}).lean()
+    
+    if(subjectSearchQuestion_test){
+      return res.status(403).json({
+        status:403,
+        message:"Fanni o'chirib bo'lmaydi, chunki unga test savoli biriktirilgan!"
+      })
+    }
+    if(subjectSearchQuestion_img){
+      return res.status(403).json({
+        status:403,
+        message:"Fanni o'chirib bo'lmaydi, chunki unga rasmli test savoli biriktirilgan!"
+      })
+    }
+
     let deleteSubject = await Subject.findOneAndRemove({_id:subjectId})
     if(!deleteSubject){
       return res.status(400).json({
