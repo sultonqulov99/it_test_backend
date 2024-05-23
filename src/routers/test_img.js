@@ -11,4 +11,6 @@ router.get('/api/testImg/all',controller.GET_TESTIMG)
 
 router.delete("/api/delete-testImg/:testImgId",controller.DELETE)
 
+router.put("/api/testImg-update/:id",controller.UPDATE)
+
 export default router

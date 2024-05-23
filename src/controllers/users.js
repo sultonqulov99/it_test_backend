@@ -198,7 +198,7 @@ const POST_SUBJECT = async(req,res,next) => {
       data:newSubject
   })   
   } catch (error) {
-    return next(new InternalServerError(500,error.massage))
+    return next(new InternalServerError(500,error.message))
   }
 }
 
@@ -256,8 +256,6 @@ const TOKEN_VERIFY = (req,res,next) => {
     return next(new InternalServerError(500,error.massage))
   }
 }
-
-
 
 const STATUS = async(req,res,next) => {
   try {
@@ -404,7 +402,6 @@ const USER_UPDATE = async(req,res,next) => {
     surname = surname ? surname : user.surname
     user.contact = "9989 (--) --- -- --"
     password = password ? password : user.password
-    console.log(12,user);
     let user_update = await User.findByIdAndUpdate(user._id,{...user,name,surname,password,contact})
 
     file.mv(path.join(process.cwd(),'src','uploads',img))

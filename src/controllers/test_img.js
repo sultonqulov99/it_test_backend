@@ -3,6 +3,8 @@ import {InternalServerError} from "../utils/errors.js"
 import Question_img from '../model/question_img.js'
 import Key_ball from '../model/key_ball.js'
 import Answer_img from "../model/answer_img.js"
+import mongoose from 'mongoose'
+const { ObjectId } = mongoose.Types;
 
 const POST_QUESTION_IMG = async(req,res,next) => {
     try {
@@ -87,14 +89,10 @@ const POST_ANSWER_IMG = async(req,res,next) =>{
 const GET = async(req,res,next)=>{
     try {
         let {level,subject_id} = req.query
-        let test = await Question_img.find({
+        let tests = await Question_img.find({
             $and: [{ level: level }, { subject_id: subject_id }],
           }).lean();
-        
-        let tests = test.map(el => {
-            el.img = "http://localhost:8080/" + el.img
-            return el
-        })
+
         return res.status(200).json({
             status:200,
             massage:"OK",
@@ -138,6 +136,46 @@ const GET_TESTIMG = async(req,res,next) => {
     }
   }
 
+  const UPDATE = async (req, res, next) => {
+    try {
+      let { id } = req.params;
+      let {question_text,correct_answer,subject_id} = req.body
+      let {file} = req.files
+      
+      let img = Date.now() + file.name.replace(/\s/g,'')
+      let test = await Question_img.findById({ _id: id });
+      
+      if (!test) {
+        return res.status(404).json({
+          status: 404,
+          massage: "Test img savoli topilmadi",
+          data: null,
+        });
+      }
+      let testQuestionUpdate = await Question_img.findOneAndUpdate(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            question_text: question_text,
+            subject_id: subject_id,
+            correct_answer: correct_answer,
+            img:img
+          },
+        },
+        { new: true }
+      );
+      file.mv(path.join(process.cwd(),'src','uploads',img))
+      return res.status(200).json({
+        status: 200,
+        massage: "update test img question",
+        data: testQuestionUpdate,
+      });
+    } catch (error) {
+      console.log(error)
+      return next(new InternalServerError(500, error.massage));
+    }
+  };
+
 export default {
-    POST_QUESTION_IMG,POST_ANSWER_IMG,GET,GET_TESTIMG,DELETE
+    POST_QUESTION_IMG,POST_ANSWER_IMG,GET,GET_TESTIMG,DELETE,UPDATE
 }

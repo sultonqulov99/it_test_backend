@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import userRouter from './routers/users.js'
 import fileUpload from 'express-fileupload'
 import testRouter from './routers/test.js'
+import adminRouter from './routers/admin.js'
 import express  from "express";
 import dotenv from 'dotenv'
 import cors from 'cors'
@@ -24,6 +25,7 @@ async function dev(){
         app.use(userRouter)
         app.use(testRouter)
         app.use(testImgRouter)
+        app.use(adminRouter)
         app.use(express.static(path.join(process.cwd(),'src','uploads')))
 
         app.use((error,req,res,next) => {
