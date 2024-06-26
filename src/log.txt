@@ -26,3 +26,16 @@ GET___/api/users/statusId/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhd
 GET___/api/users/statusId/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTEsImlhdCI6MTcxODM1ODEwMiwiZXhwIjoxNzE4MzU4NDYyfQ.ywwqtr0xPjqtAEtWcXUSBEdxv_8LIR9PWTbyX9TJa5A___1719401200261___InternalServerError___invalid signature
 GET___/api/users/statusId/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzE4MzU4NTU0LCJleHAiOjE3MTgzNTg5MTR9.ds6gubR5PhP5G_7q-oVLFc4g1q_OgTe2yjK6w3FAUwk___1719401232081___InternalServerError___invalid signature
 GET___/api/users/statusId/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiaWF0IjoxNzE4MzU4NTU0LCJleHAiOjE3MTgzNTg5MTR9.ds6gubR5PhP5G_7q-oVLFc4g1q_OgTe2yjK6w3FAUwk___1719401232091___InternalServerError___invalid signature
+POST___/api/subjectAdd___1719411028825___InternalServerError___Cannot read properties of undefined (reading 'name')
+POST___/api/subjectAdd___1719411199716___InternalServerError___Cannot read properties of undefined (reading 'name')
+POST___/api/subjectAdd___1719411238916___InternalServerError___Subject validation failed: fileName: Cast to string failed for value "{
+  name: 'IT live wallpaper black.jpg',
+  data: <Buffer ff d8 ff e1 06 52 45 78 69 66 00 00 4d 4d 00 2a 00 00 00 08 00 07 01 12 00 03 00 00 00 01 00 01 00 00 01 1a 00 05 00 00 00 01 00 00 00 62 01 1b 00 05 ... 164895 more bytes>,
+  size: 164945,
+  encoding: '7bit',
+  tempFilePath: '',
+  truncated: false,
+  mimetype: 'image/jpeg',
+  md5: '7d552e1bff3f5faa8626ad13d017b439',
+  mv: [Function: mv]
+}" (type Object) at path "fileName"

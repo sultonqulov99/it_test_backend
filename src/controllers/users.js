@@ -138,9 +138,10 @@ const POST_SUBJECT = async (req, res, next) => {
     let {fileName} = req.files
     let img = Date.now() + fileName.name.replace(/\s/g,'')
     status_id.toString();
+    
     let newSubject = new Subject({
       name,
-      fileName,
+      fileName:img,
       status_id,
       level,
       createdAt:new Date()
