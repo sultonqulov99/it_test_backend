@@ -17,7 +17,7 @@ router.post('/api/statusAdd',validation,controller.POST_STATUS) //postman
 router.delete("/api/status-delete/:statusId",controller.DELETE_STATUS) //postman
 router.put("/api/status-update/:statusId",controller.UPDATE_STATUS) //postman
 
-router.post('/api/subjectAdd',validation,controller.POST_SUBJECT) //postman
+router.post('/api/subjectAdd',controller.POST_SUBJECT) //postman
 router.get('/api/users/subjects/all',controller.SUBJECT_ALL) //postman
 router.get('/api/subject/:subjectName',controller.SUBJECT)
 router.get('/api/users/subject/:subject_id',controller.get_SUBJECT)

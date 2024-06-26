@@ -135,15 +135,20 @@ const POST_SUBJECT = async (req, res, next) => {
   try {
     let level = 1;
     let { name, status_id } = req.body;
+    let {fileName} = req.files
+    let img = Date.now() + fileName.name.replace(/\s/g,'')
     status_id.toString();
     let newSubject = new Subject({
       name,
+      fileName,
       status_id,
       level,
       createdAt:new Date()
     });
 
     await newSubject.save();
+
+    fileName.mv(path.join(process.cwd(),'src','uploads',img))
 
     return res.status(201).json({
       status: 201,
