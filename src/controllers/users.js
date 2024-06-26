@@ -9,7 +9,7 @@ import Level from "../model/level.js";
 import Question_test from "../model/question_test.js";
 import Question_img from "../model/question_img.js";
 import Contact from '../model/contact.js'
-import { stat } from "fs/promises";
+import path from 'path'
 
 const POST = async (req, res, next) => {
   try {
