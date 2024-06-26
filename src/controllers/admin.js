@@ -2,6 +2,7 @@ import { InternalServerError, AuthorizationError } from "../utils/errors.js";
 import JWT from "jsonwebtoken";
 import sha256 from "sha256";
 import Admin from "../model/admin.js";
+import Subject from "../model/subjects.js";
 
 const POST_LOGIN = async (req, res, next) => {
   try {
@@ -116,8 +117,34 @@ const UPDATE = async (req, res, next) => {
   }
 };
 
+const GET_STATUS = async (req, res, next) => {
+  try {
+    let { statusId } = req.params;
+
+    let subjects = await Subject.find({
+      status_id: statusId
+    }).lean();
+
+    if (!subjects) {
+      return res.status(404).json({
+        status: 404,
+        massage: "Status not found",
+        data: [],
+      });
+    }
+    return res.status(200).json({
+      status: 200,
+      massage: "ok",
+      data: subjects,
+    });
+  } catch (error) {
+    return next(new InternalServerError(500, error.message));
+  }
+};
+
 export default {
   POST_LOGIN,
   POST_REGISTER,
   UPDATE,
+  GET_STATUS
 };

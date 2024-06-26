@@ -8,7 +8,8 @@ import Status from "../model/status.js";
 import Level from "../model/level.js";
 import Question_test from "../model/question_test.js";
 import Question_img from "../model/question_img.js";
-import path from "path";
+import Contact from '../model/contact.js'
+import { stat } from "fs/promises";
 
 const POST = async (req, res, next) => {
   try {
@@ -31,6 +32,7 @@ const POST = async (req, res, next) => {
       status_id,
       password,
       contact,
+      createdAt:new Date()
     });
 
     await newUser.save();
@@ -44,12 +46,15 @@ const POST = async (req, res, next) => {
     });
 
     await newKey_ball.save();
+    
+    newUser = newUser.toObject();
+    delete newUser.password
 
     return res.status(201).json({
       status: 201,
       massage: "User added succasse",
       data: newUser,
-      token: JWT.sign({ userId: newUser._id, statusId: newUser.status_id }, "12345",{expiresIn:60*60*24}),
+      token: JWT.sign({ userId: newUser._id,statusId: newUser.status_id}, "12345",{expiresIn:60*60*24}),
     });
 
   } catch (error) {
@@ -59,11 +64,13 @@ const POST = async (req, res, next) => {
 
 const GET_STATUS = async (req, res, next) => {
   try {
-    let { statusId } = req.params;
-    let token_verify = JWT.verify(statusId, "12345");
+    let { token } = req.params;
+    let status = JWT.verify(token,'12345') 
+
     let subjects = await Subject.find({
-      status_id: token_verify.statusId,
+      status_id: status.statusId
     }).lean();
+
     if (!subjects) {
       return res.status(404).json({
         status: 404,
@@ -77,7 +84,7 @@ const GET_STATUS = async (req, res, next) => {
       data: subjects,
     });
   } catch (error) {
-    return next(new InternalServerError(500, error.massage));
+    return next(new InternalServerError(500, error.message));
   }
 };
 const POST_LOGIN = async (req, res, next) => {
@@ -87,7 +94,7 @@ const POST_LOGIN = async (req, res, next) => {
 
     let user = await User.findOne({
       $and: [{ contact: contact }, { password: password }],
-    });
+    }).lean()
 
     if (!user) {
       return res.status(404).json({
@@ -95,8 +102,9 @@ const POST_LOGIN = async (req, res, next) => {
         massage: "User not found",
       });
     }
-    return res.status(200).json({
-      status: 200,
+    delete user.password
+    return res.status(201).json({
+      status: 201,
       massage: user,
       token: JWT.sign({ userId: user._id, statusId: user.status_id }, "12345",{expiresIn:60*60*24}),
     });
@@ -109,6 +117,7 @@ const POST_STATUS = async (req, res, next) => {
     let { name } = req.body;
     let newStatus = new Status({
       name,
+      createdAt:new Date()
     });
     await newStatus.save();
 
@@ -131,6 +140,7 @@ const POST_SUBJECT = async (req, res, next) => {
       name,
       status_id,
       level,
+      createdAt:new Date()
     });
 
     await newSubject.save();
@@ -277,7 +287,8 @@ const ATTEMPTS_UPDATE = async (req, res, next) => {
     let user = await Key_ball.findOne({
       $and: [{ user_id: id }, { subject_id: subject_id }],
     }).lean();
-    let attempts = user.attempts + 1;
+
+    let attempts = +user.attempts + 1;
     let s = await Key_ball.findByIdAndUpdate(user._id, { ...user, attempts });
     return res.status(200).json({
       status: 200,
@@ -285,7 +296,7 @@ const ATTEMPTS_UPDATE = async (req, res, next) => {
       data: user,
     });
   } catch (error) {
-    return next(new InternalServerError(500, error.massage));
+    return next(new InternalServerError(500, error.message));
   }
 };
 
@@ -379,6 +390,21 @@ const get_SUBJECT = async (req, res, next) => {
       massage: "ok",
       data: subject,
     });
+  } catch (error) {
+    return next(new InternalServerError(500, error.massage));
+  }
+};
+const get_SUBJECTS = async (req, res, next) => {
+  try {
+    let { subject_id } = req.params;
+    let subjects = await Key_ball.find({ subject_id }).populate("user_id");
+
+    return res.status(200).json({
+      status: 200,
+      massage: "ok",
+      data: subjects,
+    });
+
   } catch (error) {
     return next(new InternalServerError(500, error.massage));
   }
@@ -582,6 +608,76 @@ const UPDATE_SUBJECT = async (req, res, next) => {
   }
 };
 
+const CONTACT = async (req, res, next) => {
+  try {
+    let { fullName, contact, text, user_id } = req.body;
+
+    let user = await User.findById({_id: user_id });
+
+    if (!user) {
+      return res.status(404).json({
+        status: 404,
+        massage: "user topilmadi",
+        data: null,
+      });
+    }
+    let newContact = new Contact({
+      user_id,
+      fullName,
+      contact,
+      text
+    });
+
+    await newContact.save();
+
+    return res.status(201).json({
+      status: 201,
+      massage: "Contact succass added",
+      data: newContact,
+    });
+  } catch (error) {
+    return next(new InternalServerError(500, error.message));
+  }
+};
+
+const CONTACTS = async (req, res, next) => {
+  try {
+    let contacts = await Contact.find().lean();
+    
+    contacts.reverse();
+
+    return res.status(200).json({
+      status: 200,
+      message: "All contacts",
+      data: contacts,
+    });
+  } catch (error) {
+    return next(new InternalServerError(500, error.message));
+  }
+};
+
+const CONTACT_DELETE = async (req, res, next) => {
+  try {
+    const { contactId } = req.params;
+
+    let deleteContact = await Contact.findOneAndRemove({ _id: contactId });
+    if (!deleteContact) {
+      return res.status(400).json({
+        status: 400,
+        message: "Malumot o'chirilmadi",
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: "Malumot o'chirildi",
+    });
+  } catch (error) {
+    return next(new InternalServerError(500, error.massage));
+  }
+};
+
+
 export default {
   POST,
   GET_STATUS,
@@ -608,4 +704,8 @@ export default {
   UPDATE_STATUS,
   DELETE_SUBJECT,
   UPDATE_SUBJECT,
+  get_SUBJECTS,
+  CONTACT,
+  CONTACTS,
+  CONTACT_DELETE
 };

@@ -1,7 +1,7 @@
 import {Schema,model}  from 'mongoose'
 
 const Key_ball = new Schema({
-    user_id: String,
+    user_id: { type: Schema.Types.ObjectId, ref: 'User' },
     subject_id:String,
     key: Number,
     ball:Number,

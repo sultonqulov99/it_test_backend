@@ -6,8 +6,9 @@ import Key_ball from "../model/key_ball.js";
 
 const POST_QUESTION = async (req, res, next) => {
   try {
-    const { level, test_text, subject_id, correct_answer, additive_answer } =
-      req.body;
+    const { level, test_text, subject_id, correct_answer, additive_answer } =req.body;
+    // console.log(234,additive_answer)
+
     let newQuestion = new Question_test({
       level,
       test_text,
@@ -67,6 +68,7 @@ const POST_ANSWER = async (req, res, next) => {
     });
 
     await newAnswer.save();
+    console.log(12, test, chosen_answer)
     return res.status(201).json({
       status: 201,
       massage: "Test answer succasfully added",

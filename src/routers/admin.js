@@ -8,5 +8,7 @@ router.post('/api/admin/register',controller.POST_REGISTER)
 
 router.put('/api/admin-update/',controller.UPDATE)
 
+router.get('/api/admin/statusId/:statusId',controller.GET_STATUS)
+
 
 export default router
