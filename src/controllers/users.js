@@ -8,8 +8,8 @@ import Status from "../model/status.js";
 import Level from "../model/level.js";
 import Question_test from "../model/question_test.js";
 import Question_img from "../model/question_img.js";
-import Contact from '../model/contact.js'
-import path from 'path'
+import Contact from "../model/contact.js";
+import path from "path";
 
 const POST = async (req, res, next) => {
   try {
@@ -32,7 +32,7 @@ const POST = async (req, res, next) => {
       status_id,
       password,
       contact,
-      createdAt:new Date()
+      createdAt: new Date(),
     });
 
     await newUser.save();
@@ -46,17 +46,20 @@ const POST = async (req, res, next) => {
     });
 
     await newKey_ball.save();
-    
+
     newUser = newUser.toObject();
-    delete newUser.password
+    delete newUser.password;
 
     return res.status(201).json({
       status: 201,
       massage: "User added succasse",
       data: newUser,
-      token: JWT.sign({ userId: newUser._id,statusId: newUser.status_id}, "12345",{expiresIn:60*60*24}),
+      token: JWT.sign(
+        { userId: newUser._id, statusId: newUser.status_id },
+        "12345",
+        { expiresIn: 60 * 60 * 24 }
+      ),
     });
-
   } catch (error) {
     return next(new InternalServerError(500, error.massage));
   }
@@ -65,10 +68,10 @@ const POST = async (req, res, next) => {
 const GET_STATUS = async (req, res, next) => {
   try {
     let { token } = req.params;
-    let status = JWT.verify(token,'12345') 
+    let status = JWT.verify(token, "12345");
 
     let subjects = await Subject.find({
-      status_id: status.statusId
+      status_id: status.statusId,
     }).lean();
 
     if (!subjects) {
@@ -94,7 +97,7 @@ const POST_LOGIN = async (req, res, next) => {
 
     let user = await User.findOne({
       $and: [{ contact: contact }, { password: password }],
-    }).lean()
+    }).lean();
 
     if (!user) {
       return res.status(404).json({
@@ -102,11 +105,13 @@ const POST_LOGIN = async (req, res, next) => {
         massage: "User not found",
       });
     }
-    delete user.password
+    delete user.password;
     return res.status(201).json({
       status: 201,
       massage: user,
-      token: JWT.sign({ userId: user._id, statusId: user.status_id }, "12345",{expiresIn:60*60*24}),
+      token: JWT.sign({ userId: user._id, statusId: user.status_id }, "12345", {
+        expiresIn: 60 * 60 * 24,
+      }),
     });
   } catch (error) {
     return next(new InternalServerError(500, error.massage));
@@ -117,7 +122,7 @@ const POST_STATUS = async (req, res, next) => {
     let { name } = req.body;
     let newStatus = new Status({
       name,
-      createdAt:new Date()
+      createdAt: new Date(),
     });
     await newStatus.save();
 
@@ -135,21 +140,21 @@ const POST_SUBJECT = async (req, res, next) => {
   try {
     let level = 1;
     let { name, status_id } = req.body;
-    let {fileName} = req.files
-    let img = Date.now() + fileName.name.replace(/\s/g,'')
+    let { fileName } = req.files;
+    let img = Date.now() + fileName.name.replace(/\s/g, "");
     status_id.toString();
-    
+
     let newSubject = new Subject({
       name,
-      fileName:img,
+      fileName: img,
       status_id,
       level,
-      createdAt:new Date()
+      createdAt: new Date(),
     });
 
     await newSubject.save();
 
-    fileName.mv(path.join(process.cwd(),'src','uploads',img))
+    fileName.mv(path.join(process.cwd(), "src", "uploads", img));
 
     return res.status(201).json({
       status: 201,
@@ -166,7 +171,9 @@ const GET_USERS = async (req, res, next) => {
     const { userName } = req.query;
     let users = await User.find().lean();
     if (userName) {
-      let user = users.filter(user => user.name.toLowerCase().includes(userName.toLowerCase()))
+      let user = users.filter((user) =>
+        user.name.toLowerCase().includes(userName.toLowerCase())
+      );
       return res.status(200).json({
         status: 200,
         message: "All users",
@@ -420,7 +427,6 @@ const get_SUBJECTS = async (req, res, next) => {
       massage: "ok",
       data: subjects,
     });
-
   } catch (error) {
     return next(new InternalServerError(500, error.massage));
   }
@@ -599,7 +605,9 @@ const UPDATE_SUBJECT = async (req, res, next) => {
   try {
     const { subjectId } = req.params;
     const { name } = req.body;
+    let { file } = req.files;
 
+    let img = Date.now() + file.name.replace(/\s/g, "");
     let subject = await Subject.findById({ _id: subjectId });
     if (!subject) {
       return res.status(404).json({
@@ -610,7 +618,12 @@ const UPDATE_SUBJECT = async (req, res, next) => {
     }
     let subjectUpdate = await Subject.findOneAndUpdate(
       { _id: subjectId },
-      { $set: { name: name } },
+      {
+        $set: {
+          name: name,
+          fileName: img,
+        },
+      },
       { new: true }
     );
 
@@ -628,7 +641,7 @@ const CONTACT = async (req, res, next) => {
   try {
     let { fullName, contact, text, user_id } = req.body;
 
-    let user = await User.findById({_id: user_id });
+    let user = await User.findById({ _id: user_id });
 
     if (!user) {
       return res.status(404).json({
@@ -641,7 +654,7 @@ const CONTACT = async (req, res, next) => {
       user_id,
       fullName,
       contact,
-      text
+      text,
     });
 
     await newContact.save();
@@ -659,7 +672,7 @@ const CONTACT = async (req, res, next) => {
 const CONTACTS = async (req, res, next) => {
   try {
     let contacts = await Contact.find().lean();
-    
+
     contacts.reverse();
 
     return res.status(200).json({
@@ -692,7 +705,6 @@ const CONTACT_DELETE = async (req, res, next) => {
     return next(new InternalServerError(500, error.massage));
   }
 };
-
 
 export default {
   POST,
