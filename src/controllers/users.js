@@ -626,7 +626,7 @@ const UPDATE_SUBJECT = async (req, res, next) => {
       },
       { new: true }
     );
-    file.mv(path.join(process.cwd(),'src','uploads',img))
+    fileName.mv(path.join(process.cwd(),'src','uploads',img))
     return res.status(200).json({
       status: 200,
       massage: "update subject",
