@@ -163,25 +163,26 @@ const POST_SUBJECT = async (req, res, next) => {
 
 const GET_USERS = async (req, res, next) => {
   try {
-    const {userName} = req.query
-    if(userName){
-      let user = await User.find({name:userName}).lean();
+    const { userName } = req.query;
+    let users = await User.find().lean();
+    if (userName) {
+      let user = users.filter(user => user.name.toLowerCase().includes(userName.toLowerCase()))
       return res.status(200).json({
         status: 200,
-        massage: "All users",
+        message: "All users",
         data: user,
       });
     }
-    let users = await User.find().lean();
     return res.status(200).json({
       status: 200,
-      massage: "All users",
+      message: "All users",
       data: users,
     });
   } catch (error) {
-    return next(new InternalServerError(500, error.massage));
+    return next(new InternalServerError(500, error.message));
   }
 };
+
 const GET_USER = async (req, res, next) => {
   try {
     let { u_id } = req.params;
