@@ -171,7 +171,6 @@ const GET_TESTIMG = async(req,res,next) => {
         data: testQuestionUpdate,
       });
     } catch (error) {
-      console.log(error)
       return next(new InternalServerError(500, error.massage));
     }
   };

@@ -68,7 +68,7 @@ const POST_ANSWER = async (req, res, next) => {
     });
 
     await newAnswer.save();
-    console.log(12, test, chosen_answer)
+
     return res.status(201).json({
       status: 201,
       massage: "Test answer succasfully added",

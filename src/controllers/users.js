@@ -163,6 +163,15 @@ const POST_SUBJECT = async (req, res, next) => {
 
 const GET_USERS = async (req, res, next) => {
   try {
+    const {userName} = req.query
+    if(userName){
+      let user = await User.find({name:userName}).lean();
+      return res.status(200).json({
+        status: 200,
+        massage: "All users",
+        data: user,
+      });
+    }
     let users = await User.find().lean();
     return res.status(200).json({
       status: 200,
@@ -713,5 +722,5 @@ export default {
   get_SUBJECTS,
   CONTACT,
   CONTACTS,
-  CONTACT_DELETE
+  CONTACT_DELETE,
 };

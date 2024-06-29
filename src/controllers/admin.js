@@ -66,7 +66,7 @@ const POST_REGISTER = async (req, res, next) => {
       status: 201,
       massage: "Admin succass added",
       data: newAdmin,
-      token: JWT.sign({ role: newAdmin.role }, "shaftoli", { expiresIn: 600 }),
+      token: JWT.sign({ role: newAdmin.role }, "shaftoli", { expiresIn: 60*60*5 }),
     });
   } catch (error) {
     return next(new AuthorizationError(402, error.message));
