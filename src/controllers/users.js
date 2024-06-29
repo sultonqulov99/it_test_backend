@@ -605,9 +605,9 @@ const UPDATE_SUBJECT = async (req, res, next) => {
   try {
     const { subjectId } = req.params;
     const { name } = req.body;
-    let { file } = req.files;
+    let { fileName } = req.files;
 
-    let img = Date.now() + file.name.replace(/\s/g, "");
+    let img = Date.now() + fileName.name.replace(/\s/g, "");
     let subject = await Subject.findById({ _id: subjectId });
     if (!subject) {
       return res.status(404).json({
@@ -626,7 +626,6 @@ const UPDATE_SUBJECT = async (req, res, next) => {
       },
       { new: true }
     );
-
     return res.status(200).json({
       status: 200,
       massage: "update subject",
