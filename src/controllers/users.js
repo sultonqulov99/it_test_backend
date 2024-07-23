@@ -16,7 +16,7 @@ const POST = async (req, res, next) => {
     let key = 0;
     let ball = 0;
     let attempts = 0;
-    let { name, surname, status_id, password, contact } = req.body;
+    let { name, surname, region ,status_id, password, contact } = req.body;
     password = sha256(password);
 
     let login = await User.findOne({ contact }).lean();
@@ -29,6 +29,7 @@ const POST = async (req, res, next) => {
     let newUser = new User({
       name,
       surname,
+      region,
       status_id,
       password,
       contact,
@@ -426,7 +427,7 @@ const get_SUBJECTS = async (req, res, next) => {
       status: 200,
       massage: "ok",
       data: subjects,
-    });
+    }); 
   } catch (error) {
     return next(new InternalServerError(500, error.massage));
   }
@@ -705,6 +706,27 @@ const CONTACT_DELETE = async (req, res, next) => {
     return next(new InternalServerError(500, error.massage));
   }
 };
+const KEYBALL_DELETE = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    let deleteKeyBall = await Key_ball.findOneAndRemove({ _id: id });
+    if (!deleteKeyBall) {
+      return res.status(400).json({
+        status: 400,
+        message: "Malumot o'chirilmadi",
+      });
+    }
+
+    return res.status(200).json({
+      status: 200,
+      message: "Malumot o'chirildi",
+    });
+  } catch (error) {
+    return next(new InternalServerError(500, error.massage));
+  }
+};
+
 
 export default {
   POST,
@@ -736,4 +758,5 @@ export default {
   CONTACT,
   CONTACTS,
   CONTACT_DELETE,
+  KEYBALL_DELETE
 };

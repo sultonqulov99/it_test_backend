@@ -38,6 +38,7 @@ router.put('/api/users/update/info',controller.USER_UPDATE)
 router.post('/api/contact',validation,controller.CONTACT)
 router.get('/api/contacts',controller.CONTACTS)
 router.delete('/api/delete-contact/:contactId',controller.CONTACT_DELETE)
+router.delete('/api/delete-keyball/:id',controller.KEYBALL_DELETE)
 
 
 export default router
